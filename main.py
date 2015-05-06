@@ -9,46 +9,43 @@ class Point:
 
 def init():
     fill_matrix()
+    add_random_points(2)
     print_matrix()
 
+def add_random_points(point_count):
+    zeroes = 0
+    for x1 in range(range_matrix):
+	for y1 in range(range_matrix):
+	    if elements[x1][y1].value == 0:
+	        zeroes += 1
+    if zeroes == 0 :
+        print "YOU LOSE!"
+        return
+    for i in range(point_count):
+	compare_res = 0     	
+	while compare_res < 1 :
+	    rand_x = random.randint(1,range_matrix)-1
+            rand_y = random.randint(1,range_matrix)-1
+            if elements[rand_x][rand_y].value > 0:
+                compare_res = 0
+            else:
+                elements[rand_x][rand_y].value = random.randrange(2,5,2)
+		compare_res = 1			
+		break
+    
 def fill_matrix():
     global elements 
-    global range_matrix    
-       
+    global range_matrix           
+    
     range_matrix = 4
-    compare_res = 0     
-    point1x = random.randint(1,range_matrix)
-    point1y = random.randint(1,range_matrix)
-
     elements = [[Point(i,j,0) for i in range(range_matrix)] for j in range(range_matrix)]   
-        
-    elements[point1x-1][point1y-1].value = random.randrange(2,5,2)
-
-    while compare_res < 1 :
-        point2x = random.randint(1,range_matrix)
-	point2y = random.randint(1,range_matrix)
-	if point1x == point2x and point1y == point2y:
-	    compare_res = 0
-	else:
-            elements[point2x-1][point2y-1].value = random.randrange(2,5,2)
-	    break
-
+    
 def print_matrix():
    for x1 in range(range_matrix):
 	for y1 in range(range_matrix):
 	    sys.stdout.write("%s " % elements[x1][y1].value)	    
 	print
         
-def make_move(arg):
-    if arg == 'a':
-        move_left()
-    elif arg == 'w':
-        move_up()
-    elif arg == 'd':
-        move_right()
-    else:
-        move_down()
-
 def slip_left(elements):
     slip_count = 1        
     while slip_count > 0:
@@ -77,9 +74,8 @@ def move_left():
 		elements[x][i+1].value = 0	
             i +=1
 	slip_left(elements[x])
-	for i in xrange(0,4,1):
-            sys.stdout.write("%s " %  elements[x][i].value)
-	print
+    add_random_points(1)
+    
 
 def slip_right(elements):
     slip_count = 1        
@@ -109,22 +105,32 @@ def move_right():
 		elements[x][i].value = 0	
             i +=1
 	slip_right(elements[x])
-	for i in xrange(0,4,1):
-            sys.stdout.write("%s " %  elements[x][i].value)
-	print
+    add_random_points(1)
 
-    print 'right'
-            
+
 def move_up():
     print 'up'
 def move_down():
     print 'down'
+
+def make_move(arg):
+    if arg == 'a':
+        move_left()
+    elif arg == 'w':
+        move_up()
+    elif arg == 'd':
+        move_right()
+    else:
+        move_down()
+
 
 def main():
     while True:    
         arg = raw_input("enter something: ")
         if arg == 'a' or arg == 'w' or arg == 's' or arg == 'd':
             make_move(arg)
+            #add_random_points(1)
+    	    print_matrix()			
 	    print
         else:
             print 'Only a w s d allowed!\n'
