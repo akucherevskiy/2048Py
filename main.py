@@ -39,6 +39,23 @@ def print_matrix():
 	    sys.stdout.write("%s " % elements[x1][y1].value)	    
 	print
 
+def slip(elements):
+    slip_count = 1        
+    while slip_count > 0:
+        for i in range(len(elements)-1):
+            if elements[i].value == 0 and elements[i+1].value > elements[i].value:
+	        elements[i].value = elements[i+1].value
+		elements[i+1].value = 0
+		slip_count +=1
+	count = 0 
+        for i in range(len(elements)-1):
+           if elements[i].value == 0 and elements[i+1].value>elements[i].value:
+	       count += 1
+	if count>0:
+	    slip_count = count
+	else:
+	    slip_count = 0
+        
 def make_move(arg):
     if arg == 'a':
         move_left()
@@ -50,7 +67,20 @@ def make_move(arg):
         move_down()
     
 def move_left():
-    print 'left'
+    for x in range(range_matrix):
+        res = 0
+	i = 0
+	slip(elements[x])
+	for i in xrange(0,3,1):
+            if i<3 and elements[x][i].value == elements[x][i+1].value:
+                elements[x][i].value *= 2
+		elements[x][i+1].value = 0	
+            i +=1
+	slip(elements[x])
+	for i in xrange(0,4,1):
+            sys.stdout.write("%s " %  elements[x][i].value)
+	print
+            
 def move_up():
     print 'up'
 def move_right():
@@ -62,6 +92,7 @@ def main():
     arg = raw_input("enter something: ")
     if arg == 'a' or arg == 'w' or arg == 's' or arg == 'd':
         make_move(arg)
+	print
     else:
         print 'Only a w s d allowed!\n'
 
