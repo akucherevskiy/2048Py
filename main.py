@@ -1,6 +1,6 @@
 import sys
 import random
-global range_matrix           
+global range_matrix
 range_matrix = 4
 
 class Point:
@@ -10,8 +10,9 @@ class Point:
         self.value = value
 class Game:
     def init(self):
-        self.fill_matrix()
+        self.fill_matrix() 
         self.add_random_points(2)
+	print '\n    2048! \n'
         self.print_matrix()
 
     def add_random_points(self, point_count):
@@ -154,6 +155,41 @@ class Game:
             else:
                 print 'Only a w s d allowed!\n'
 
+class TestCase(Game):
+    def throw_error(self,func_name):
+        return 'error in ' + func_name + '!'
+
+    def test_fill_matrix(self):
+        self.fill_matrix()
+        print 'test_fill_matrix:'
+        
+	for x in range(range_matrix):
+	    for y in range(range_matrix):
+	        print True if isinstance(elements[x][y], Point) else self.throw_error('test_fill_matrix\n')
+
+    def test_add_random_points(self):
+	last_count = 0
+	self.fill_matrix()
+	for k in [1,2]:
+	    print 'test_add_random_points - ', 'with matrix update' if k==2 else 'without matrix update\n', 
+	    for i in range(1, 5):
+	        tmp = 0 if k == 1 else self.fill_matrix() 
+	        self.add_random_points(i)
+	        print i, ' points:'
+	        count = 0
+		
+	        for x in range(range_matrix):
+	            for y in range(range_matrix):
+	                count += 1 if elements[x][y].value > 0 else 0
+	        
+	        print True if count == (last_count+1 if k == 1 else i)  else self.throw_error('test_add_random_points')
+	        last_count =  count + i if k == 1 else 0
+
+test_obj = TestCase()
+test_obj.test_fill_matrix()
+test_obj.test_add_random_points()
+
 game = Game()
 game.init()
 game.main()
+
