@@ -35,7 +35,7 @@ def fill_matrix():
 def print_matrix():
    for x1 in range(range_matrix):
 	for y1 in range(range_matrix):
-	    sys.stdout.write(  "\033[93m %s \033[0m " %  elements[x1][y1].value)	    
+	    sys.stdout.write(" %s " %  elements[x1][y1].value)	    
 	print
 
 def check_if_lose():
@@ -47,123 +47,32 @@ def check_if_lose():
     if zeroes == 0 :
         print "YOU LOSE!"
         return
-        
-def slip_left(elements):
+
+def side_point(arg,i):
+    if arg == 'a' or arg == 'w':
+        return [i, i+1]
+    elif arg == 's' or arg == 'd':
+        return [i+1, i]
+    else:
+        print 'Invalid arg!'
+        return
+
+def slip(side, elem):
     slip_count = 1
     add_new_point_flag = 0        
     while slip_count > 0:
         for i in range(len(elements)-1):
-            if elements[i].value == 0 and elements[i+1].value > elements[i].value:
-	        elements[i].value = elements[i+1].value
-		elements[i+1].value = 0
+            if elem[side_point(side, i)[0]].value == 0 and elem[side_point(side, i)[1]].value > elem[side_point(side, i)[0]].value:
+	        elem[side_point(side, i)[0]].value = elem[side_point(side, i)[1]].value
+		elem[side_point(side, i)[1]].value = 0
 		slip_count +=1
 		add_new_point_flag +=1
 	count = 0 
-        for i in range(len(elements)-1):
-           if elements[i].value == 0 and elements[i+1].value>elements[i].value:
+        for i in range(len(elem)-1):
+           if elem[side_point(side, i)[0]].value == 0 and elem[side_point(side, i)[1]].value > elem[i].value:
 	       count += 1
-	if count>0:
-	    slip_count = count
-	else:
-	    slip_count = 0
+        slip_count = count if count > 0 else 0
     return add_new_point_flag
-
-def slip_right(elements):
-    add_new_point_flag = 0        
-    slip_count = 1        
-    while slip_count > 0:
-        for i in range(len(elements)-1):
-            if elements[i+1].value == 0 and elements[i].value > elements[i+1].value:
-	        elements[i+1].value = elements[i].value
-		elements[i].value = 0
-		slip_count +=1
-		add_new_point_flag +=1
-
-	count = 0 
-        for i in range(len(elements)-1):
-           if elements[i+1].value == 0 and elements[i].value>elements[i+1].value:
-	       count += 1
-	if count>0:
-	    slip_count = count
-	else:	    
-	    slip_count = 0
-    return add_new_point_flag
-
-def slip_up(elements):
-    add_new_point_flag = 0
-    slip_count = 1        
-    while slip_count > 0:
-        for i in xrange(len(elements)-1):
-            if elements[i].value == 0 and elements[i+1].value > elements[i].value:
-	        elements[i].value = elements[i+1].value
-		elements[i+1].value = 0
-		slip_count +=1
-		add_new_point_flag +=1
-	count = 0 
-        for i in range(len(elements)-1):
-           if elements[i].value == 0 and elements[i+1].value>elements[i].value:
-	       count += 1
-	if count>0:
-	    slip_count = count
-	else:
-	    slip_count = 0
-    return add_new_point_flag
-
-def slip_down(elements):
-    add_new_point_flag = 0
-    slip_count = 1        
-    while slip_count > 0:
-        for i in xrange(len(elements)-1):
-            if elements[i+1].value == 0 and elements[i].value > elements[i+1].value:
-	        elements[i+1].value = elements[i].value
-		elements[i].value = 0
-		slip_count +=1
-		add_new_point_flag +=1
-	count = 0 
-        for i in range(len(elements)-1):
-           if elements[i].value == 0 and elements[i].value>elements[i+1].value:
-	       count += 1
-	if count>0:
-	    slip_count = count
-	else:
-	    slip_count = 0
-    return add_new_point_flag
-
-def move_left(x):
-    random_flag = 0
-    for i in xrange(0,len(elements)-1):
-         if elements[x][i].value != 0 and elements[x][i].value == elements[x][i+1].value:
-             elements[x][i].value *= 2
-	     elements[x][i+1].value = 0
-	     random_flag += 1
-    return random_flag	
-          
-def move_right(x):
-    random_flag = 0
-    for i in xrange(0,len(elements)-1):
-        if elements[x][i].value != 0 and elements[x][i].value == elements[x][i+1].value:
-            elements[x][i+1].value *= 2
-	    elements[x][i].value = 0	
-	    random_flag += 1
-    return random_flag
-
-def move_up(x):
-    random_flag = 0
-    for i in xrange(0,len(elements)-1):
-        if elements[i][x].value != 0 and  elements[i][x].value == elements[i+1][x].value:
-            elements[i][x].value *= 2
-	    elements[i+1][x].value = 0
-	    random_flag += 1	
-    return random_flag            
-
-def move_down(x):
-    random_flag = 0
-    for i in xrange(0,len(elements)-1):
-        if elements[i][x].value != 0 and  elements[i][x].value == elements[i+1][x].value:
-            elements[i+1][x].value *= 2
-	    elements[i][x].value = 0
-	    random_flag += 1	
-    return random_flag
 
 def elements_to_slip(x):
     elements_to_slip =[]    
@@ -171,33 +80,68 @@ def elements_to_slip(x):
         elements_to_slip.append(elements[y][x]) 
     return elements_to_slip
 
+def move_left(x):
+    random_flag = 0
+    random_flag += slip('a', elements[x])
+    for i in xrange(0,len(elements)-1):
+         if elements[x][i].value != 0 and elements[x][i].value == elements[x][i+1].value:
+             elements[x][i].value *= 2
+	     elements[x][i+1].value = 0
+	     random_flag += 1
+    random_flag += slip('a', elements[x])    
+    return random_flag	
+          
+def move_right(x):
+    random_flag = 0
+    random_flag += slip('d', elements[x])
+    for i in xrange(0,len(elements)-1):
+        if elements[x][i].value != 0 and elements[x][i].value == elements[x][i+1].value:
+            elements[x][i+1].value *= 2
+	    elements[x][i].value = 0	
+	    random_flag += 1
+    random_flag += slip('d', elements[x])
+    return random_flag
+
+def move_up(x):
+    random_flag = 0
+    random_flag += slip('w', elements_to_slip(x))	
+    for i in xrange(0,len(elements)-1):
+        if elements[i][x].value != 0 and  elements[i][x].value == elements[i+1][x].value:
+            elements[i][x].value *= 2
+	    elements[i+1][x].value = 0
+	    random_flag += 1	
+    random_flag += slip('w', elements_to_slip(x))	
+    return random_flag            
+
+def move_down(x):
+    random_flag = 0
+    random_flag += slip('s', elements_to_slip(x))	
+    for i in xrange(0,len(elements)-1):
+        if elements[i][x].value != 0 and  elements[i][x].value == elements[i+1][x].value:
+            elements[i+1][x].value *= 2
+	    elements[i][x].value = 0
+	    random_flag += 1	
+    random_flag += slip('s', elements_to_slip(x))	
+    return random_flag
+
 def make_move(arg):
     random_flag = 0
-    i = 0
 
     for x in range(range_matrix):
         #left
 	if arg == 'a':
-	    random_flag += slip_left(elements[x])
 	    random_flag += move_left(x)
-	    random_flag += slip_left(elements[x])
 	#right
         elif arg == 'd':
-	    random_flag += slip_right(elements[x])
 	    random_flag += move_right(x)
-	    random_flag += slip_right(elements[x])
 	#up
         elif arg == 'w':
-	    random_flag += slip_up(elements_to_slip(x))	
 	    random_flag += move_up(x)
-	    random_flag += slip_up(elements_to_slip(x))	
 	#down 
         else:
-	    random_flag += slip_down(elements_to_slip(x))	
 	    random_flag += move_down(x)
-	    random_flag += slip_down(elements_to_slip(x))	
-    
-    check_if_lose()
+
+    #check_if_lose()
     if random_flag > 0:
         add_random_points(1)
 
